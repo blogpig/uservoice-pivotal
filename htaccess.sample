@@ -1,0 +1,6 @@
+AuthName "UserVoice Pivotal"
+AuthUserFile /var/www/.htpasswd
+AuthType Basic
+<Files "import.php">
+  Require valid-user
+</Files>
