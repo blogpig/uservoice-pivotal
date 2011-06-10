@@ -1,0 +1,126 @@
+UserVoice-Pivotal v1.0
+
+
+UserVoice-Pivotal is an Uservoice (http://uservoice.com) integration
+script for Pivotal Tracker (http://www.pivotaltracker.com).
+
+
+[ PREREQUISITES ]
+
+* PHP5
+* PHP/cURL
+
+
+[ INSTALLATION ]
+
+Just clone the repository into a directory on your web server and you're
+almost ready to go :)
+
+  cd ~/public_html/
+  git clone git@github.com:blogpig/uservoice-pivotal.git
+  cd uservoice-pivotal
+  copy config.sample.php config.php
+
+
+[ CONFIGURATION ]
+
+Edit the "config.php" and enter your UserVoice info and credentials.
+
+Here's a brief description of the settings you need to configure.
+
+* USERVOICE_SUBDOMAIN
+
+Your UserVoice subdomain, e.g. for 'http://yoursubdomain.uservoice.com',
+enter just 'yoursubdomain' in this field.
+
+* USERVOICE_KEY & USERVOICE_SECRET
+
+On UserVoice Dashboard, go to Seetting > Channels and scroll down to the
+API section. Click the 'Add API Client' button to create a new API
+client. Copy the 'Key' and 'Secret' params and paste them into
+USERVOICE_KEY and USERVOICE_SECRET.
+
+* USERVOICE_ADMIN_EMAIL & USERVOICE_ADMIN_PASSWORD
+
+Your email and password for logging into the UserVoice Admin area. You
+can also create dedicated UserVoice Admin for Pivotal integration.
+
+* USERVOICE_SITE_URL
+
+This is by default your UserVoice site URL (e.g. 'http://yoursubdomain.uservoice.com'),
+but can also be e.g. 'http://support.yourdomain.com' if you use a custom
+Feedback Site (top of the Settings > Channels page).
+
+* USERVOICE_IMPORT_FORUMS
+
+Imports all forums by default ('all'), but can be configured to import
+none ('none') or just a few (e.g. '12345,12678' will import suggetions
+from forums with IDs 12345 and 12678 only).
+
+Additional filtering can be configured by using a category param for
+Pivotal Import API URL (see PIVOTAL TRACKER CONFIGURATION below).
+
+* USERVOICE_IMPORT_TICKETS
+
+Again, imports all tickets by default ('all'), can be turned off ('none')
+and can also be configured to import just tickets having a certain
+custom field and value (e.g. 'Type=Bug' will import just tickets with
+the value of custom field Type set to Bug)
+
+* USERVOICE_UPDATE_FORUMS & USERVOICE_UPDATE_TICKETS
+
+Set these to 'all' if you want suggestion & ticket statuses in UserVoice
+updated when story statuses are updated in Pivotal.
+
+* LOG_ERRORS, LOG_IMPORTS & LOG_HOOKS
+
+The script will write errors to the log file by default, but you can
+enable both hook and import requst logging by setting the values of the
+LOG_ERRORS, LOG_IMPORTS and LOG_HOOKS params.
+
+Make sure the LOGS_PATH (e.g. public_html/uservoice-pivotal/logs/) is
+writable by the web server.
+
+
+[ SECURITY ]
+
+In order to protect the import script, configure basic authentication
+for the 'import.php' file. You can use the htaccess.sample file as a
+template.
+
+More info: http://www.howtoforge.com/htaccess_authentication
+
+
+[ PIVOTAL TRACKER CONFIGURATION ]
+
+Go the the Project Integrations page for your project.
+
+* Activity Web Hook
+
+Link the hook to the hook.php script on your site, e.g. 
+http://yourdomain.com/uservoice-pivotal/hook.php
+
+* External Tool Integrations
+
+In the "Create New Integration" dropdown select "Other" and fill the
+following params:
+
+  Name: UserVoice
+  Base URL: http://yourdomain.com/uservoice-pivotal/base.php/
+  Import API URL: http://yourdomain.com/uservoice-pivotal/import.php
+
+The import script also accepts a 'category' param if you want to filter
+the suggestions being imported, e.g.
+
+  http://yourdomain.com/uservoice-pivotal/import.php?category=YourProduct
+
+You will also want to protect your import script with basic auth:
+
+  Basic Auth Username: [username from the .htaccess/.htpasswd file]
+  Basic Auth Password: [password from the .htaccess/.htpasswd file]
+
+
+[ CONCLUSION ]
+
+That should be enough to get you going :) Comments & suggestions are
+most welcome :)
