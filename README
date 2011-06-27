@@ -124,7 +124,7 @@ forum) and any defined custom fields (see USERVOICE_IMPORT_FORUMS and
 USERVOICE_IMPORT_TICKETS above), e.g.
 
   http://yourdomain.com/uservoice-pivotal/import.php?forum=123456
-  http://yourdomain.com/uservoice-pivotal/import.php?product=YourProduct
+  http://yourdomain.com/uservoice-pivotal/import.php?product_name=YourProduct
 
 You will also want to protect your import script with basic auth:
 
