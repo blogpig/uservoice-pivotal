@@ -33,21 +33,26 @@
       $http = new UserVoiceHTTP();
       if($http) {
         $api_reply = $http->getUrl($api_url);
+        //echo $api_reply;
 
         $data = @json_decode($api_reply);
 
         if($data) {
           if(isset($data->tickets)) {
-            //var_dump($data->tickets);
+
+            $uservoice_tickets = apply_url_params(USERVOICE_IMPORT_TICKETS, $_GET);
+            //var_dump($uservoice_tickets);
+
             foreach($data->tickets as $ticket) {
               //var_dump($ticket);
+              //var_dump($ticket->custom_fields);
 
-              if(USERVOICE_IMPORT_TICKETS == 'all' || match_custom_fields(USERVOICE_IMPORT_TICKETS, $ticket->custom_fields)) {
+              if($uservoice_tickets == 'all' || match_custom_fields($uservoice_tickets, $ticket->custom_fields, true)) {
                 $story = $story_xml;
 
                 $story = str_replace('%EXTERNAL_ID%', $ticket->id . '-uvt-' . $ticket->ticket_number, $story);
-                $story = str_replace('%NAME%', xml_utf8_encode('Ticket #' . $ticket->ticket_number . (isset($ticket->created_by) && isset($ticket->created_by->name) ? ' by ' . $ticket->created_by->name : '')), $story);
-                $story = str_replace('%DESCRIPTION%', xml_utf8_encode($ticket->subject), $story);
+                $story = str_replace('%NAME%', xml_utf8_encode('Ticket #' . $ticket->ticket_number . ': ' . $ticket->subject . (isset($ticket->created_by) && isset($ticket->created_by->name) ? ' by ' . $ticket->created_by->name : '')), $story);
+                $story = str_replace('%DESCRIPTION%', xml_utf8_encode(isset($ticket->messages) && is_array($ticket->messages) ? $ticket->messages[count($ticket->messages) - 1]->body : $ticket->subject), $story);
                 $story = str_replace('%REQUESTED_BY%', xml_utf8_encode(isset($ticket->created_by) && isset($ticket->created_by->name) ? $ticket->created_by->name : ''), $story);
                 $story = str_replace('%CREATED_AT%', $ticket->created_at, $story);
                 $story = str_replace('%STORY_TYPE%', 'bug', $story);
@@ -78,9 +83,14 @@
      * Get forum discussions...
      */
 
+    $uservoice_forums = isset($_GET['forum']) && $_GET['forum'] ? strtolower($_GET['forum']) : false;
+
     $forum_ids = array();
-    if(defined('USERVOICE_IMPORT_FORUMS') && USERVOICE_IMPORT_FORUMS && USERVOICE_IMPORT_FORUMS != 'none') {
-      if(USERVOICE_IMPORT_FORUMS != 'all') {
+    if(($uservoice_forums && $uservoice_forums != 'none') || (defined('USERVOICE_IMPORT_FORUMS') && USERVOICE_IMPORT_FORUMS && USERVOICE_IMPORT_FORUMS != 'none')) {
+      if($uservoice_forums != 'all') {
+        $forum_ids = explode(',', $uservoice_forums);
+      }
+      else if(USERVOICE_IMPORT_FORUMS != 'all') {
         $forum_ids = explode(',', USERVOICE_IMPORT_FORUMS);
       }
       else {
@@ -145,7 +155,7 @@
                     $story = str_replace('%STORY_TYPE%', 'feature', $story);
                     $story = str_replace('%ESTIMATE%', '', $story);
                     echo $story;
-                    
+
                     unset($story);
                   }
                 }

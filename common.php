@@ -52,17 +52,38 @@
     return $xml;
   }
 
-  function match_custom_fields($needle, $haystack) {
+  function apply_url_params($needle, $url_params) {
+    $result = $needle;
+
+    if($url_params) {
+      foreach($url_params as $name => $value) {
+        $result = str_replace('%' . $name . '%', $value, $result);
+      }
+    }
+
+    return $result;
+  }
+
+  function match_custom_fields($needle, $haystack, $match_all = false) {
     $result = false;
 
     if($needle && $haystack) {
       $needles = explode(',', strtolower($needle));
+
+      $keys_and_values = array();
       foreach($haystack as $field) {
-        $result = in_array(strtolower($field->key . '=' . $field->value), $needles);
-        if($result) {
+        $keys_and_values[] = strtolower($field->key . '=' . $field->value);
+      }
+
+      $found = $match_all;
+      foreach($needles as $needle) {
+        $found = ($match_all ? $found : true) && in_array(strtolower($needle), $keys_and_values);
+        if((!$match_all && $found) || ($match_all && !$found)) {
           break;
         }
       }
+
+      $result = $found;
     }
 
     return $result;
