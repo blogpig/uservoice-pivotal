@@ -57,8 +57,8 @@ Imports all forums by default ('all'), but can be configured to import
 none ('none') or just a few (e.g. '12345,12678' will import suggetions
 from forums with IDs 12345 and 12678 only).
 
-Additional filtering can be configured by using a category param for
-Pivotal Import API URL (see PIVOTAL TRACKER CONFIGURATION below).
+Additional filtering can be configured by using category and/or forum 
+params for Pivotal Import API URL (see PIVOTAL TRACKER CONFIGURATION below).
 
 * USERVOICE_IMPORT_TICKETS
 
@@ -66,6 +66,11 @@ Again, imports all tickets by default ('all'), can be turned off ('none')
 and can also be configured to import just tickets having a certain
 custom field and value (e.g. 'Type=Bug' will import just tickets with
 the value of custom field Type set to Bug)
+
+Additionaly, if you want to add a dynamic filter for each Pivotal project
+you can set it to e.g. 'Product=%product_name%' - this uses the URL param 
+'product_name' and import just tickets having that value for custom field
+'Product' (see PIVOTAL TRACKER CONFIGURATION below).
 
 * USERVOICE_UPDATE_FORUMS & USERVOICE_UPDATE_TICKETS
 
@@ -113,6 +118,13 @@ The import script also accepts a 'category' param if you want to filter
 the suggestions being imported, e.g.
 
   http://yourdomain.com/uservoice-pivotal/import.php?category=YourProduct
+
+Other supported params include 'forum' (expects the ID of your UserVoice 
+forum) and any defined custom fields (see USERVOICE_IMPORT_FORUMS and 
+USERVOICE_IMPORT_TICKETS above), e.g.
+
+  http://yourdomain.com/uservoice-pivotal/import.php?forum=123456
+  http://yourdomain.com/uservoice-pivotal/import.php?product=YourProduct
 
 You will also want to protect your import script with basic auth:
 
