@@ -87,7 +87,7 @@
 
     $forum_ids = array();
     if(($uservoice_forums && $uservoice_forums != 'none') || (defined('USERVOICE_IMPORT_FORUMS') && USERVOICE_IMPORT_FORUMS && USERVOICE_IMPORT_FORUMS != 'none')) {
-      if($uservoice_forums != 'all') {
+      if($uservoice_forums && $uservoice_forums != 'none' && $uservoice_forums != 'all') {
         $forum_ids = explode(',', $uservoice_forums);
       }
       else if(USERVOICE_IMPORT_FORUMS != 'all') {
