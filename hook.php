@@ -74,6 +74,7 @@
                     /*
                      * respond  PUT /api/v1/forums/forum_id/suggestions/suggestion_id/respond.format
                      */
+                    $response_text = false;
                     switch($current_state) {
                       case 'unscheduled':
                         $response_status = 'under review';
@@ -89,6 +90,9 @@
                         break;
                       case 'accepted':
                         $response_status = 'completed';
+                        if(defined('MESSAGE_SUGGESTION_COMPLETED') && MESSAGE_SUGGESTION_COMPLETED && MESSAGE_SUGGESTION_COMPLETED != 'none') {
+                          $response_text = MESSAGE_SUGGESTION_COMPLETED;
+                        }
                         break;
                       default:
                         $response_status = false;
@@ -99,12 +103,33 @@
                       $access_token = $oauth->getAccessToken();
                       log_hook_event(__FILE__ . ' @ ' . __LINE__ . " ::\n  access_token = " . print_r($access_token, true));
 
+                      // Add a note before changing status to completed...
+                      if($response_status == 'completed') {
+                        if(defined('NOTE_SUGGESTION_COMPLETED') && NOTE_SUGGESTION_COMPLETED && NOTE_SUGGESTION_COMPLETED != 'none') {
+                          $note_url = $oauth->signTrustedUrl(USERVOICE_API_URL . "/forums/{$uv['type_id']}/suggestions/{$uv['id']}/notes.json", $access_token, 'POST');
+                          log_hook_event(__FILE__ . ' @ ' . __LINE__ . " ::\n  note_url = " . print_r($note_url, true));
+                          $params = array(
+                            'note[text]' => NOTE_SUGGESTION_COMPLETED,
+                          );
+
+                          $http = new UserVoiceHTTP();
+                          if($http) {
+                            $reply = $http->postUrl($note_url, $params);
+                            log_hook_event(__FILE__ . ' @ ' . __LINE__ . " ::\n  reply = " . print_r($reply, true));
+                          }
+                          unset($http);
+                        }
+                      }
+
                       $api_url = $oauth->signTrustedUrl(USERVOICE_API_URL . "/forums/{$uv['type_id']}/suggestions/{$uv['id']}/respond.json", $access_token, 'PUT');
                       log_hook_event(__FILE__ . ' @ ' . __LINE__ . " ::\n  api_url = " . print_r($api_url, true));
                       $params = array(
                         '_method' => 'put',
                         'response[status]' => $response_status,
                       );
+                      if($response_text) {
+                        $params['response[text]'] = $response_text;
+                      }
                     }
                   }
                 }
@@ -138,6 +163,39 @@
                     if($update_state !== false) {
                       $access_token = $oauth->getAccessToken();
                       log_hook_event(__FILE__ . ' @ ' . __LINE__ . " ::\n  access_token = " . print_r($access_token, true));
+
+                      // Add a message/note before changing status to closed...
+                      if($update_state == 'closed') {
+                        if(defined('MESSAGE_TICKET_CLOSED') && MESSAGE_TICKET_CLOSED && MESSAGE_TICKET_CLOSED != 'none') {
+                          $message_url = $oauth->signTrustedUrl(USERVOICE_API_URL . "/tickets/{$uv['id']}/ticket_messages.json", $access_token, 'POST');
+                          log_hook_event(__FILE__ . ' @ ' . __LINE__ . " ::\n  message_url = " . print_r($message_url, true));
+                          $params = array(
+                            'ticket_message[text]' => MESSAGE_TICKET_CLOSED,
+                          );
+
+                          $http = new UserVoiceHTTP();
+                          if($http) {
+                            $reply = $http->postUrl($message_url, $params);
+                            log_hook_event(__FILE__ . ' @ ' . __LINE__ . " ::\n  reply = " . print_r($reply, true));
+                          }
+                          unset($http);
+                        }
+
+                        if(defined('NOTE_TICKET_CLOSED') && NOTE_TICKET_CLOSED && NOTE_TICKET_CLOSED != 'none') {
+                          $note_url = $oauth->signTrustedUrl(USERVOICE_API_URL . "/tickets/{$uv['id']}/notes.json", $access_token, 'POST');
+                          log_hook_event(__FILE__ . ' @ ' . __LINE__ . " ::\n  note_url = " . print_r($note_url, true));
+                          $params = array(
+                            'note[text]' => NOTE_TICKET_CLOSED,
+                          );
+
+                          $http = new UserVoiceHTTP();
+                          if($http) {
+                            $reply = $http->postUrl($note_url, $params);
+                            log_hook_event(__FILE__ . ' @ ' . __LINE__ . " ::\n  reply = " . print_r($reply, true));
+                          }
+                          unset($http);
+                        }
+                      }
 
                       $api_url = $oauth->signTrustedUrl(USERVOICE_API_URL . "/tickets/{$uv['id']}.json", $access_token, 'PUT');
                       log_hook_event(__FILE__ . ' @ ' . __LINE__ . " ::\n  api_url = " . print_r($api_url, true));
@@ -189,7 +247,7 @@
               }
               unset($http);
             }
-            
+
           }
           unset($oauth);
         }

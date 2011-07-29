@@ -16,6 +16,11 @@
   define('USERVOICE_UPDATE_FORUMS', 'all'); // 'none' or 'all'
   define('USERVOICE_UPDATE_TICKETS', 'all'); // 'none' or 'all'
 
+  // Messages/notes upon completing suggestions/closing tickets...
+  define('MESSAGE_SUGGESTION_COMPLETED', 'none'); // 'none' or the text of the note (public)
+  define('NOTE_SUGGESTION_COMPLETED', 'This suggestion has been completed.'); // 'none' or the text of the note (private)
+  define('MESSAGE_TICKET_CLOSED', 'none'); // 'none' or the text of the message (public)
+  define('NOTE_TICKET_CLOSED', 'This ticket has been closed.'); // 'none' or the text of the note (private)
 
   // UserVoice API & OAuth info
   define('USERVOICE_API_URL', 'https://' . USERVOICE_SUBDOMAIN . '.uservoice.com/api/v1');
