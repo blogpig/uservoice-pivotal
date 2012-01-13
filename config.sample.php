@@ -34,10 +34,12 @@
   define('ERROR_LOG_FILE', LOGS_PATH . '/error.log');
   define('IMPORT_LOG_FILE', LOGS_PATH . '/import.log');
   define('HOOK_LOG_FILE', LOGS_PATH . '/hook.log');
+  define('STATS_LOG_FILE', LOGS_PATH . '/stats.log');
 
   // What to write to log files?
   define('LOG_ERRORS', true);
   define('LOG_IMPORTS', false);
   define('LOG_HOOKS', false);
+  define('LOG_STATS', false);
 
 ?>

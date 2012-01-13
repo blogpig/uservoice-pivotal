@@ -28,6 +28,14 @@
     return $result;
   }
 
+  function log_stats_event($event, $timestamp = true) {
+    $result = false;
+    if(defined('LOG_STATS') && LOG_STATS) {
+      $result = log_event(STATS_LOG_FILE, $event, $timestamp);
+    }
+    return $result;
+  }
+
   function log_error_event($event, $timestamp = true) {
     $result = false;
     if(defined('LOG_ERRORS') && LOG_ERRORS) {
@@ -35,6 +43,7 @@
     }
     return $result;
   }
+
 
   function xml_utf8_encode($data) {
     $result = $data;
@@ -72,12 +81,13 @@
 
       $keys_and_values = array();
       foreach($haystack as $field) {
-        $keys_and_values[] = strtolower($field->key . '=' . $field->value);
+        $keys_and_values[] = trim(strtolower($field->key . '=' . $field->value));
       }
 
       $found = $match_all;
-      foreach($needles as $needle) {
-        $found = ($match_all ? $found : true) && in_array(strtolower($needle), $keys_and_values);
+      foreach($needles as $ndl) {
+        $ndl = strtolower($ndl);
+        $found = ($match_all ? $found : true) && in_array($ndl, $keys_and_values);
         if((!$match_all && $found) || ($match_all && !$found)) {
           break;
         }

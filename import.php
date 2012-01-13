@@ -41,11 +41,14 @@
           if(isset($data->tickets)) {
 
             $uservoice_tickets = apply_url_params(USERVOICE_IMPORT_TICKETS, $_GET);
+            log_import_event(__FILE__ . ' @ ' . __LINE__ . " ::\n  uservoice_tickets = " . print_r($uservoice_tickets, true));
             //var_dump($uservoice_tickets);
 
             foreach($data->tickets as $ticket) {
               //var_dump($ticket);
               //var_dump($ticket->custom_fields);
+              log_import_event(__FILE__ . ' @ ' . __LINE__ . " ::\n  ticket = " . print_r($ticket, true));
+              log_import_event(__FILE__ . ' @ ' . __LINE__ . " ::\n  match_custom_fields = " . print_r(match_custom_fields($uservoice_tickets, $ticket->custom_fields, true), true));
 
               if($uservoice_tickets == 'all' || match_custom_fields($uservoice_tickets, $ticket->custom_fields, true)) {
                 $story = $story_xml;
