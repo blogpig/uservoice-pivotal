@@ -26,7 +26,7 @@
     }
     if($uv['type'] == 't') {
       // Ticket
-      $base_url .= "/admin/tickets/#!search?id={$uv['type_id']}&term=assignee:any+status:any";
+      $base_url .= "admin/tickets/{$uv['type_id']}/";
     }
   }
   else {
